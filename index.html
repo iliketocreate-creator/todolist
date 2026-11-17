@@ -3,13 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To Do list</title>
+    <title>My To Do List</title>
+    <style>
+        :root {
+            --ink: #17213a;
+            --muted: #747b8d;
+            --cream: #f7f4ee;
+            --card: #ffffff;
+            --coral: #ff795d;
+            --coral-dark: #ed6047;
+            --line: #e9e5de;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            display: grid;
+            place-items: center;
+            padding: 32px 20px;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 12% 12%, rgba(255, 121, 93, 0.12), transparent 23rem),
+                linear-gradient(135deg, #faf8f3 0%, #f1eee6 100%);
+            font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        .todo-app {
+            width: min(560px, 100%);
+            padding: 38px;
+            border: 1px solid rgba(23, 33, 58, 0.06);
+            border-radius: 24px;
+            background: var(--card);
+            box-shadow: 0 24px 70px rgba(23, 33, 58, 0.12);
+        }
+
+        h1 {
+            margin: 0 0 28px;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(2.2rem, 8vw, 3.4rem);
+            line-height: 1;
+            letter-spacing: -0.04em;
+        }
+
+        .add-task {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        #taskInput {
+            min-width: 0;
+            flex: 1;
+            height: 52px;
+            padding: 0 16px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            outline: none;
+            background: var(--cream);
+            color: var(--ink);
+            font: inherit;
+            transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+        }
+
+        #taskInput::placeholder {
+            color: #9a9dab;
+        }
+
+        #taskInput:focus {
+            border-color: var(--coral);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(255, 121, 93, 0.14);
+        }
+
+        .add-task button {
+            height: 52px;
+            padding: 0 20px;
+            border: 0;
+            border-radius: 12px;
+            background: var(--coral);
+            color: #fff;
+            font: inherit;
+            font-weight: 750;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255, 121, 93, 0.24);
+            transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
+        }
+
+        .add-task button:hover {
+            background: var(--coral-dark);
+            box-shadow: 0 10px 24px rgba(255, 121, 93, 0.32);
+            transform: translateY(-2px);
+        }
+
+        .add-task button:active {
+            transform: translateY(0);
+        }
+
+        #taskList {
+            display: grid;
+            gap: 10px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        #taskList:empty {
+            min-height: 0;
+        }
+
+        #taskList li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 58px;
+            padding: 10px 10px 10px 16px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: #fff;
+            font-weight: 650;
+            animation: task-in 240ms ease-out;
+        }
+
+        #taskList li.completed {
+            border-style: dashed;
+            background: var(--cream);
+            color: var(--muted);
+        }
+
+        #taskList li.completed .task-text {
+            text-decoration: line-through;
+            text-decoration-thickness: 2px;
+        }
+
+        .task-text {
+            flex: 1;
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .complete-button {
+            flex: 0 0 auto;
+            min-height: 38px;
+            padding: 0 13px;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            background: #fff;
+            color: var(--ink);
+            font: inherit;
+            font-size: 0.82rem;
+            font-weight: 750;
+            cursor: pointer;
+            transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+        }
+
+        .complete-button:hover {
+            border-color: #6eaa91;
+            background: #eff8f3;
+            color: #39765b;
+        }
+
+        @keyframes task-in {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 520px) {
+            body {
+                align-items: start;
+                padding: 16px;
+            }
+
+            .todo-app {
+                padding: 26px 20px;
+                border-radius: 18px;
+            }
+
+            .add-task {
+                align-items: stretch;
+            }
+
+            .add-task button {
+                padding: 0 14px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                scroll-behavior: auto !important;
+                transition: none !important;
+                animation: none !important;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>My To Do list</h1>
-    <input type="text" id="taskInput" placeholder="Add a new task" >
-    <button onclick="addTask()">Add Task</button>
-    <ul id="taskList"></ul>
+    <main class="todo-app">
+        <h1>My To Do List</h1>
+        <div class="add-task">
+            <input type="text" id="taskInput" placeholder="Add a new task" aria-label="New task">
+            <button type="button" onclick="addTask()">Add Task</button>
+        </div>
+        <ul id="taskList" aria-live="polite"></ul>
+    </main>
     <script>
         function addTask(){
             const taskInput= document.getElementById('taskInput');
@@ -23,17 +228,28 @@
                 alert("This task already exists.");
                 return;
             }
-            let taskItem= document.createElement('li');
-            taskItem.innerHTML= taskText + ' <button onclick="completeTask(this)">Complete</button>';
+            const taskItem = document.createElement('li');
+            const taskTextElement = document.createElement('span');
+            const completeButton = document.createElement('button');
+
+            taskTextElement.className = 'task-text';
+            taskTextElement.textContent = taskText;
+            completeButton.type = 'button';
+            completeButton.className = 'complete-button';
+            completeButton.textContent = 'Complete';
+            completeButton.onclick = function () { completeTask(this); };
+
+            taskItem.appendChild(taskTextElement);
+            taskItem.appendChild(completeButton);
             taskList.appendChild(taskItem);
             taskInput.value= "";
-             }
-             function completeTask(button) {
-                const taskItem = button.parentElement;
-                taskItem.style.textDecoration = "line-through";
-                button.remove();
-                
-             }
+        }
+
+        function completeTask(button) {
+            const taskItem = button.parentElement;
+            taskItem.classList.toggle('completed');
+            button.remove();
+        }
     </script>
 </body>
 </html>
